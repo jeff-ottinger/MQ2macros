@@ -1,0 +1,21 @@
+#turbo
+#event Stop "#*#Okay, stop.#*#"
+#event Start "#*#Kick my ass.#*#
+Sub Main
+	:Loop
+	/doevents
+	/delay 5
+	/goto :Loop
+/return
+
+Sub Event_Stop
+	/pet hold on
+	/delay 10
+	/pet back off
+/return
+
+Sub Event_Start
+	/target Wubbalubb
+	/delay 10
+	/pet attack
+/return

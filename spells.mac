@@ -1,0 +1,84 @@
+#define MaxArcaneSkill 235 
+#chat tell 
+#event lang "tells you" 
+
+#include spell_routines.inc
+
+Sub Main(maxSkill)
+/echo ${Skill[swimming].SkillCap}
+/endmacro
+    /declare currentSpell 
+    /declare maxSkill 
+    /declare skillName 
+    /declare spellName 
+    
+    /varset currentSpell 1
+    /echo maxSkill=${maxSkill} 
+	/target mercenary
+    /call cast "Word of Spirit" gem1
+	/delay 20
+	/call cast "Sense the Dead" gem2
+	/delay 20
+	/call cast "Endure Cold" gem3 
+	/delay 20
+	/call cast "Siphon Strength" gem4 
+	/delay 20
+	/call cast "Disease Cloud" gem5
+	/delay 20
+    :nextSpell 
+        /echo currentspell=${currentSpell} 
+        /echo casting=${Me.Gem[${currentSpell}]} 
+        
+        /if ( ${Bool[${Me.Gem[${currentSpell}]}]} ) { 
+            /varset skillName ${Me.Gem[${currentSpell}].Skill} 
+            :castSpell 
+                /doevents 
+                /if ( ${Me.PctMana}<20) { 
+                    /sit on 
+                    /call MedBreak 
+                } 
+                /echo ${skillName}=${Me.Skill[${skillName}]} 
+                /if ( ${Me.Skill[${skillName}]} >= ${maxSkill} ) { 
+                    /varset currentSpell ${Math.Calc[${currentSpell}+1]} 
+                    /goto :nextSpell
+                } 
+                /call CheckGM 
+                /call cast "${Me.Gem[${currentSpell}]}" 
+                
+                :checkCursor 
+                /if (${Cursor.ID}) { 
+                    /autoinv 
+                    /goto :checkCursor 
+                } 
+            /goto :castSpell 
+        } 
+    
+
+/return 
+
+Sub CheckGM 
+    :GMCheck 
+    /if (${Bool[${Spawn[gm].ID}]}) { 
+       /echo 'Cast Macro' A GM or Guide has been detected in the zone,  the macro will resume  when the zone is clear of GM/Guides 
+       /delay 600s 
+       /goto :GMCheck 
+    } 
+/return 
+
+Sub Event_Chat 
+  /echo Got a tell, pausing for 10 minutes 
+  /delay 600s 
+/return 
+
+Sub Event_Lang 
+  /echo Got a tell, pausing for 10 minutes 
+  /delay 600s 
+/return 
+
+Sub MedBreak 
+    /stand 
+    /sit 
+    :MedMore 
+        /delay 2s 
+        /if (${Me.CurrentMana}<${Me.MaxMana}) /goto :MedMore 
+/return

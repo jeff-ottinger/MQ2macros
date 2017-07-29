@@ -1,0 +1,23 @@
+#turbo
+Sub Main
+	/g Kick my ass.
+	:Loop
+		/if ( ${Me.PctHPs}<20) { 
+			/g Okay, stop.
+			/call BindWound
+		}
+		/delay 10
+	/goto :Loop
+/return
+
+Sub BindWound
+    :BindMore
+		/delay 5s
+		/doability "Bind Wound"
+		/delay 8s
+        /if (${Me.PctHPs} < 70) {
+			/goto :BindMore
+		} else {
+			/g Kick my ass.
+		}
+/return

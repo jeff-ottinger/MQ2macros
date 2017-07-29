@@ -1,0 +1,111 @@
+#turbo
+#event SkillUp "#*#You have become better at #1#! (#2#)#*#"
+
+Sub Main
+    /declare index int outer
+	/declare done int outer
+	/declare currentSkill int outer
+	/declare itemType string outer
+	
+	/varset done 0
+	/if ( ${Bool[${Plugin[MQ2MoveUtils]}]} ) {
+		/echo plugin detected
+	}
+    /call Stick
+	/attack on
+	/echo **Beginning Training**
+	:Scan
+		/for currentSkill 0 to 3
+			/bandolier Activate ${currentSkill}
+			/varset itemType ${InvSlot[mainhand].Item.Type}
+			/if ( !${Bool[${itemType}]} || ${itemType.Equal[Martial]} ) {
+				/varset itemType Hand to Hand
+			}
+			/if ( ${itemType.Equal[Piercing]} ) {
+				/varset itemType 1H Piercing
+			}
+			/echo ${itemType} : ${Me.Skill[${itemType}]}/${Skill[${itemType}].SkillCap}
+			/if ( ${Me.Skill[${itemType}]} <= ${Skill[${itemType}].SkillCap} ) {
+				/echo Working ${itemType}
+				/for index 1 to 30
+					/doevents
+					/call Taunt
+					/call Bash
+					/call Disarm
+					/call Begging
+					/call Hide
+					/delay 60
+				/next index
+				/varset done 1
+			}
+		/next currentSkill
+		/if ( ${done} < 1 ) {
+			/attack off
+			/echo **Done Training**
+			/endmacro
+		}
+	/goto :Scan
+/return
+
+Sub Stick
+	/stick 8
+/return
+
+Sub Event_SkillUp(SkillUpText, MySkill, int Amount)
+	/echo ${MySkill} : ${Amount}
+/return
+
+Sub Taunt
+	/if ( ${Me.Skill[taunt]} < ${Skill[taunt].SkillCap} ) {
+		/if ( ${Me.AbilityReady[taunt]} ) {
+			/doability taunt
+		}
+	}
+/return
+
+Sub Bash
+	/if ( ${Me.Skill[bash]} < ${Skill[bash].SkillCap}) {
+		/if ( ${InvSlot[offhand].Item.Type.Equal[shield]} ) {
+			/if ( ${Me.AbilityReady[bash]} ) {
+				/doability bash
+			}
+		} else {
+			/if ( ${Me.AbilityReady[${Me.Ability[slam]}]} ) {
+				/echo slam
+				/doability ${Me.Ability[slam]}
+			}
+		}
+	}
+/return
+
+Sub Disarm
+	/if ( ${Me.Skill[disarm]} < ${Skill[disarm].SkillCap} ) {
+		/if ( ${Me.AbilityReady[disarm]} ) {
+			/doability disarm
+		}
+	}
+/return
+
+Sub Begging
+	/if ( ${Me.Skill[begging]} < ${Skill[begging].SkillCap} ) {
+		/if ( ${Me.AbilityReady[begging]} ) {
+			/attack off
+			/delay 5
+			/doability begging
+			/delay 5
+			/attack on
+		}
+	}
+/return
+
+Sub Hide
+	/if ( ${Me.Skill[hide]} < ${Skill[hide].SkillCap} ) {
+		/if ( ${Me.AbilityReady[hide]} ) {
+			/attack off
+			/delay 5
+			/doability hide
+			/delay 5
+			/attack on
+		}
+	}
+/return
