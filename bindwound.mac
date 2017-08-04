@@ -1,23 +1,37 @@
 #turbo
+#event SkillUp "#*#You have become better at #1#! (#2#)#*#"
+#event NeedBandages "#*#You can't bandage without bandages.#*#"
+
 Sub Main
-	/g Kick my ass.
+	/g attack me
 	:Loop
 		/if ( ${Me.PctHPs}<20) { 
-			/g Okay, stop.
+			/g stop attacking
 			/call BindWound
 		}
-		/delay 10
+		/delay 5
 	/goto :Loop
 /return
 
 Sub BindWound
     :BindMore
+		/target ${Me.Name}
 		/delay 5s
+		/doevents
 		/doability "Bind Wound"
 		/delay 8s
         /if (${Me.PctHPs} < 70) {
 			/goto :BindMore
 		} else {
-			/g Kick my ass.
+			/g attack me
 		}
+/return
+
+Sub Event_SkillUp(SkillUpText, MySkill, int Amount)
+	/echo ${MySkill} : ${Amount}/${Skill[${MySkill}].SkillCap}
+/return
+
+Sub NeedBandages
+	/echo Out of bandages
+	/endmacro
 /return

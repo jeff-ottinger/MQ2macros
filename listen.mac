@@ -1,6 +1,9 @@
 #turbo
-#event Stop "#*#Okay, stop.#*#"
-#event Start "#*#Kick my ass.#*#
+#event StopAttack "#*##1# tells the group#*#stop attacking#*#"
+#event Attack "#*##1# tells the group#*#attack me#*#"
+#event Duel "#*##1# tells the group#*#duel me#*#"
+#event Follow "#*##1# tells the group#*#follow me#*#"
+
 Sub Main
 	:Loop
 	/doevents
@@ -8,14 +11,30 @@ Sub Main
 	/goto :Loop
 /return
 
-Sub Event_Stop
+Sub Event_StopAttack(stopText,player)
 	/pet hold on
 	/delay 10
 	/pet back off
+	/g stopping attacking ${player}
 /return
 
-Sub Event_Start
-	/target Wubbalubb
+Sub Event_Attack(attackText,player)
+	/target ${player}
 	/delay 10
 	/pet attack
+	/g attacking ${player}
+/return
+
+Sub Event_Duel(duelText,player)
+	/target ${player}
+	/delay 10
+	/duel
+	/g dueling ${player}
+/return
+
+Sub Event_Follow(followText,player)
+	/target ${player}
+	/delay 10
+	/stick 30
+	/g following ${player}
 /return

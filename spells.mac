@@ -5,8 +5,6 @@
 #include spell_routines.inc
 
 Sub Main(maxSkill)
-/echo ${Skill[swimming].SkillCap}
-/endmacro
     /declare currentSpell 
     /declare maxSkill 
     /declare skillName 

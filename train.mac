@@ -52,7 +52,7 @@ Sub Stick
 /return
 
 Sub Event_SkillUp(SkillUpText, MySkill, int Amount)
-	/echo ${MySkill} : ${Amount}
+	/echo ${MySkill} : ${Amount}/${Skill[${MySkill}].SkillCap}
 /return
 
 Sub Taunt

@@ -1,0 +1,74 @@
+#turbo
+#include spell_routines.inc
+Sub Main
+	/declare index int outer
+	/declare moblist[7] string
+	/declare currentmob int
+	/declare lastmob int
+	/varset moblist[1] "a bogwalking gnarlroot"
+	/varset moblist[2] "a native gnarlroot"
+	/varset moblist[3] "a rambling gnarlroot"
+	/varset moblist[4] "an ancient gnarlroot"
+	/varset moblist[5] "a gnarl branch"
+	/varset moblist[6] "a roving blightbark"
+	/varset moblist[7] "Thunderwood"
+    :Search
+		/for index 1 to ${moblist.Size}
+			:Nextmob
+			/varset currentmob ${Spawn[${moblist[${index}]}].ID}
+			/if (${currentmob}==${lastmob}) {
+				/goto :Nextmob
+			}			
+			/if (${Bool[${currentmob}]}==TRUE) {
+				/call travel ${moblist[${index}]} ${currentmob}
+				/call kill ${moblist[${index}]} ${currentmob}
+				/varset lastmob ${currentmob}
+				/goto :Nextmob
+			}
+		/next index
+	/goto :Search
+/return
+
+Sub travel(string spawnname, currentmob)
+	/echo Moving to ${spawnname}
+	/moveto id ${currentmob} mdist 50
+	:Travel
+		/if (${Bool[${currentmob}]}==FALSE) {
+			/return
+		}
+		/if (${Bool[${MoveTo.Stopped}]}==TRUE) {
+			/target ${spawnname}
+			/face
+			/return
+		}
+	/goto :Travel
+/return
+
+sub kill(string spawnname, currentmob)
+	/declare killtest int
+	/varset killtest ${Math.Rand[100]}
+	
+	/if (${Bool[${currentmob}]}) {
+		/moveto id ${currentmob} mdist 50
+	} else {
+		/return
+	}	
+	/echo Killing ${spawnname}
+	/target ${spawnname}
+	/delay 2s
+	/pet attack
+	/if (${killtest}<20) {
+		/call cast "Scorching Shadow"
+	}
+	:Kill
+		/if (${Bool[${Spawn[${currentmob}].State.Equal[DEAD]}]}) {
+			/hidecorpses npc
+			/delay 3s
+			/if (${killtest}<30) {
+				/call cast "Withering Decay"
+			}
+			/return
+		}
+		/delay 1s
+	/goto :Kill
+/return
